@@ -54,7 +54,6 @@ Cyene 由 **Firefly** 开发而来，在核心功能层面，两者保持高度�
 ```bash
 git clone https://github.com/qwc-ch/Cyene.git
 cd Cyene
-   
 ```
 **先 [Fork](https://github.com/qwc-ch/Cyene/fork) 到自己仓库再克隆（推荐,想把博客布署到github的话要把仓库名改为"用户名.github.io"）**
 ```bash
