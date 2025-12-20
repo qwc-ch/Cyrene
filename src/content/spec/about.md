@@ -19,7 +19,7 @@
 
 ::github{repo="CuteLeaf/Firefly"}
 
-::github{repo="saicaca/Cyene"}
+::github{repo="qwc-ch/Cyene"}
 
 
 ## 📫 联系方式
