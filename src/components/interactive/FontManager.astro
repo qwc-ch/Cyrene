@@ -1,0 +1,173 @@
+---
+import { siteConfig } from "@/config";
+
+const { font: fontConfig } = siteConfig;
+
+// 获取选中的字体
+const getSelectedFonts = () => {
+	if (!fontConfig.enable || !fontConfig.selected) return [];
+
+	const selectedIds = Array.isArray(fontConfig.selected)
+		? fontConfig.selected
+		: [fontConfig.selected];
+
+	return selectedIds
+		.map((id) => fontConfig.fonts[id])
+		.filter((font) => font?.src); // 过滤掉系统字体和不存在的字体
+};
+
+const selectedFonts = getSelectedFonts();
+
+// 生成字体CSS类名
+const generateFontClasses = () => {
+	if (!fontConfig.enable) return [];
+
+	const selectedIds = Array.isArray(fontConfig.selected)
+		? fontConfig.selected
+		: [fontConfig.selected];
+
+	return selectedIds.map((id) => `font-${id}-enabled`);
+};
+
+const fontClasses = generateFontClasses();
+
+// 生成font-family回退样式
+const generateFontFamilyStyle = () => {
+	if (!fontConfig.enable || !fontConfig.selected) return "";
+
+	const selectedIds = Array.isArray(fontConfig.selected)
+		? fontConfig.selected
+		: [fontConfig.selected];
+
+	const selectedFontFamilies = selectedIds
+		.map((id) => fontConfig.fonts[id])
+		.filter((font) => font)
+		.map((font) => `"${font.family}"`);
+
+	if (selectedFontFamilies.length === 0) return "";
+
+	const fallbacks = fontConfig.fallback || [];
+	const allFonts = [...selectedFontFamilies, ...fallbacks];
+
+	return `font-family: ${allFonts.join(", ")};`;
+};
+
+const fontFamilyStyle = generateFontFamilyStyle();
+---
+
+<!-- 字体样式表链接 -->{
+  selectedFonts.map((font) => {
+    // 判断是否为外部链接
+    const isExternalUrl =
+      font.src.startsWith("http://") ||
+      font.src.startsWith("https://") ||
+      font.src.startsWith("//");
+
+    if (isExternalUrl) {
+      // 外部字体链接 (如 Google Fonts, CDN等)
+      return <link rel="stylesheet" href={font.src} />;
+    } else {
+      // 本地字体文件
+      return (
+        <style
+          set:html={`
+        @font-face {
+          font-family: "${font.family}";
+          src: url("${font.src}") ${font.format ? `format("${font.format}")` : ""};
+          ${font.weight ? `font-weight: ${font.weight};` : ""}
+          ${font.style ? `font-style: ${font.style};` : ""}
+          ${font.display ? `font-display: ${font.display};` : ""}
+          ${font.unicodeRange ? `unicode-range: ${font.unicodeRange};` : ""}
+        }
+      `}
+        />
+      );
+    }
+  })
+}
+
+<!-- 字体预加载链接 -->
+{
+  fontConfig.enable &&
+    fontConfig.preload &&
+    selectedFonts
+      .filter((font) => !font.src.startsWith("http"))
+      .map((font) => (
+        <link
+          rel="preload"
+          href={font.src}
+          as="font"
+          type={`font/${font.format || "woff2"}`}
+          crossorigin
+        />
+      ))
+}
+
+<!-- 全局字体样式 -->
+{
+  fontConfig.enable && fontFamilyStyle && (
+    <style
+      set:html={`
+    :root {
+      --font-family-custom: ${selectedFonts.map((font) => `"${font.family}"`).join(", ")};
+      --font-family-fallback: ${(fontConfig.fallback || []).join(", ")};
+    }
+    
+    /* 应用自定义字体到body */
+    body {
+      ${fontFamilyStyle}
+    }
+    
+    /* 为每个选中的字体生成对应的CSS类 */
+    ${selectedFonts
+      .map((font) => {
+        return `
+        .font-${font.id},
+        .font-${font.id} * {
+          font-family: "${font.family}", var(--font-family-fallback) !important;
+        }
+      `;
+      })
+      .join("\n")}
+    
+    /* 为整体启用字体的body添加类名 */
+    ${fontClasses.map((className) => `.${className}`).join(",\n")} {
+      /* 字体相关的全局样式可以在这里添加 */
+    }
+  `}
+    />
+  )
+}
+
+<script>
+  // 字体加载优化和错误处理
+  if (document.fonts && typeof document.fonts.ready !== "undefined") {
+    document.fonts.ready
+      .then(() => {
+        console.log("All fonts have been loaded");
+
+        // 触发自定义事件，通知字体加载完成
+        document.dispatchEvent(new CustomEvent("fontsLoaded"));
+      })
+      .catch((error: Error) => {
+        console.warn("Font loading failed:", error);
+      });
+  }
+
+  // 字体加载性能监控
+  if (typeof PerformanceObserver !== "undefined") {
+    const observer = new PerformanceObserver((list) => {
+      list.getEntries().forEach((entry) => {
+        if (entry.entryType === "resource") {
+          // console.log(`Font resource loaded: ${entry.name} (${entry.duration.toFixed(2)}ms)`);
+        }
+      });
+    });
+
+    try {
+      observer.observe({ entryTypes: ["resource"] });
+    } catch (e) {
+      // 浏览器不支持时静默失败
+    }
+  }
+</script>

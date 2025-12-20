@@ -1,0 +1,375 @@
+---
+import { adConfig1, adConfig2 } from "@/config/adConfig";
+import type { AdConfig } from "@/types/config";
+
+export interface Props {
+	class?: string;
+	configId?: string;
+}
+
+const { class: className = "", configId } = Astro.props as Props;
+
+// 根据configId选择对应的广告配置
+const getAdConfig = (id?: string): AdConfig => {
+	switch (id) {
+		case "ad1":
+			return adConfig1;
+		case "ad2":
+			return adConfig2;
+		default:
+			return adConfig1; // 默认配置
+	}
+};
+
+const currentAdConfig = getAdConfig(configId);
+
+// 检查广告是否过期
+const isExpired = currentAdConfig.expireDate
+	? new Date() > new Date(currentAdConfig.expireDate)
+	: false;
+
+// 如果过期则不显示
+if (isExpired) {
+	return null;
+}
+
+// 处理自定义边距
+const getPaddingStyle = () => {
+	if (!currentAdConfig.padding) return "p-4"; // 默认边距
+
+	if (currentAdConfig.padding.all !== undefined) {
+		// 统一边距
+		return currentAdConfig.padding.all === "0" ? "p-0" : "";
+	}
+
+	// 单独边距
+	const { top, right, bottom, left } = currentAdConfig.padding;
+	return (
+		[
+			top !== undefined ? `pt-[${top}]` : "",
+			right !== undefined ? `pr-[${right}]` : "",
+			bottom !== undefined ? `pb-[${bottom}]` : "",
+			left !== undefined ? `pl-[${left}]` : "",
+		]
+			.filter(Boolean)
+			.join(" ") || "p-4"
+	);
+};
+
+const paddingClass = getPaddingStyle();
+---
+
+<div
+  class:list={[
+    "card-base",
+    "advertisement-widget",
+    "relative",
+    "overflow-hidden",
+    className,
+  ]}
+  data-display-count={currentAdConfig.displayCount}
+  data-closable={currentAdConfig.closable}
+>
+  <!-- 关闭按钮 -->
+  {
+    currentAdConfig.closable && (
+      <button
+        class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-all duration-200 z-10 close-ad-btn"
+        title="关闭广告"
+        aria-label="关闭广告"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    )
+  }
+
+  <!-- 广告内容 -->
+  <div class={paddingClass}>
+    <!-- 标题 -->
+    {
+      currentAdConfig.title && (
+        <h3 class="text-lg font-bold mb-3 text-center text-neutral-900 dark:text-neutral-50 transition">
+          {currentAdConfig.title}
+        </h3>
+      )
+    }
+
+    <!-- 图片 -->
+    {
+      currentAdConfig.image && (
+        <div
+          class={
+            currentAdConfig.title ||
+            currentAdConfig.content ||
+            currentAdConfig.link
+              ? "mb-3"
+              : ""
+          }
+        >
+          {currentAdConfig.image.link ? (
+            <a
+              href={currentAdConfig.image.link}
+              target={currentAdConfig.image.external ? "_blank" : "_self"}
+              rel={currentAdConfig.image.external ? "noopener noreferrer" : ""}
+              class="block group"
+            >
+              <img
+                src={currentAdConfig.image.src}
+                alt={currentAdConfig.image.alt || "广告图片"}
+                class={`w-full h-auto transition-transform duration-300 group-hover:scale-105 ${
+                  paddingClass === "p-0"
+                    ? "rounded-[var(--radius-large)]"
+                    : "rounded-lg"
+                }`}
+                loading="lazy"
+              />
+            </a>
+          ) : (
+            <img
+              src={currentAdConfig.image.src}
+              alt={currentAdConfig.image.alt || "广告图片"}
+              class={`w-full h-auto ${
+                paddingClass === "p-0"
+                  ? "rounded-[var(--radius-large)]"
+                  : "rounded-lg"
+              }`}
+              loading="lazy"
+            />
+          )}
+        </div>
+      )
+    }
+
+    <!-- 文本内容 -->
+    {
+      currentAdConfig.content && (
+        <p class="text-sm text-center mb-3 leading-relaxed text-neutral-600 dark:text-neutral-300 transition">
+          {currentAdConfig.content}
+        </p>
+      )
+    }
+
+    <!-- 链接按钮 -->
+    {
+      currentAdConfig.link && (
+        <div class="text-center">
+          <a
+            href={currentAdConfig.link.url}
+            target={currentAdConfig.link.external ? "_blank" : "_self"}
+            rel={currentAdConfig.link.external ? "noopener noreferrer" : ""}
+            class="inline-flex items-center gap-2 px-4 py-2 bg-[oklch(0.75_0.14_var(--hue))] hover:bg-[oklch(0.7_0.16_var(--hue))] text-white rounded-lg transition-all duration-200 font-medium text-sm shadow-lg shadow-[oklch(0.75_0.14_var(--hue))]/25 hover:shadow-xl hover:shadow-[oklch(0.75_0.14_var(--hue))]/30 hover:scale-105 transform"
+          >
+            <span>{currentAdConfig.link.text}</span>
+            {currentAdConfig.link.external && (
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                />
+              </svg>
+            )}
+          </a>
+        </div>
+      )
+    }
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // 清理旧的localStorage关闭状态，确保广告可以重新显示
+    localStorage.removeItem("ad-closed");
+
+    const adWidgets = document.querySelectorAll(
+      ".advertisement-widget"
+    ) as NodeListOf<HTMLElement>;
+
+    adWidgets.forEach((widget) => {
+      const closeBtn = widget.querySelector(".close-ad-btn");
+      const displayCount = parseInt(
+        widget.getAttribute("data-display-count") || "-1"
+      );
+      const isClosable = widget.getAttribute("data-closable") === "true";
+
+      // 检查显示次数限制
+      if (displayCount > 0) {
+        const storageKey = "ad-display-count";
+        const currentCount = parseInt(localStorage.getItem(storageKey) || "0");
+
+        if (currentCount >= displayCount) {
+          widget.style.display = "none";
+          return;
+        }
+
+        localStorage.setItem(storageKey, (currentCount + 1).toString());
+      }
+
+      // 绑定关闭按钮事件（关闭后刷新页面会重新显示）
+      if (closeBtn && isClosable) {
+        closeBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          // 添加关闭动画
+          widget.style.transform = "translateX(100%)";
+          widget.style.opacity = "0";
+          widget.style.transition = "all 0.3s ease-out";
+
+          setTimeout(() => {
+            widget.style.display = "none";
+            // 不再使用localStorage保存关闭状态，刷新页面后会重新显示
+          }, 300);
+        });
+      }
+    });
+  });
+</script>
+
+<style>
+  .advertisement-widget {
+    /* 完全跟随主题的背景和边框 */
+    background: var(--card-bg);
+    border: 1px solid var(--line-divider);
+    border-radius: var(--radius-large);
+    color: var(--primary-text-color);
+    /* padding由配置控制，不在CSS中设置 */
+    transition: all 0.3s ease;
+
+    /* 阴影效果跟随主题 */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    /* 深色模式下的特殊处理 */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* 深色模式阴影 */
+  :global(.dark) .advertisement-widget {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+
+  /* 文字颜色由Tailwind类处理，这里不需要额外的CSS */
+
+  .advertisement-widget:hover {
+    /* 浅色模式阴影 */
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.08),
+      0 0 0 1px var(--line-divider);
+    transform: translateY(-2px);
+    border-color: oklch(0.75 0.14 var(--hue));
+  }
+
+  /* 深色模式特殊效果 */
+  :global(.dark) .advertisement-widget:hover {
+    box-shadow:
+      0 4px 20px rgba(0, 0, 0, 0.3),
+      0 0 0 1px oklch(0.75 0.14 var(--hue));
+    background: color-mix(
+      in srgb,
+      var(--card-bg),
+      oklch(0.75 0.14 var(--hue)) 5%
+    );
+  }
+
+  .close-ad-btn {
+    opacity: 0;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+  }
+
+  .advertisement-widget:hover .close-ad-btn {
+    opacity: 1;
+  }
+
+  /* 主题色按钮效果 */
+  .advertisement-widget a[class*="bg-[oklch"] {
+    background: oklch(0.75 0.14 var(--hue));
+    transition: all 0.2s ease;
+  }
+
+  .advertisement-widget a[class*="bg-[oklch"]:hover {
+    background: oklch(0.7 0.16 var(--hue));
+    box-shadow: 0 4px 12px
+      color-mix(in srgb, oklch(0.75 0.14 var(--hue)), transparent 70%);
+  }
+
+  /* 图片悬停效果 */
+  .advertisement-widget img {
+    transition: all 0.3s ease;
+  }
+
+  .advertisement-widget:hover img {
+    filter: brightness(1.05) saturate(1.1);
+  }
+
+  :global(.dark) .advertisement-widget:hover img {
+    filter: brightness(1.1) saturate(1.15);
+  }
+
+  /* 响应式调整 */
+  @media (max-width: 768px) {
+    .advertisement-widget {
+      margin: 0; /* 与其他组件保持一致的边距（由外层布局控制） */
+      border-radius: var(--radius-large);
+      /* 保持左右边框，避免与其他卡片不一致 */
+      backdrop-filter: blur(8px);
+    }
+
+    .advertisement-widget:hover {
+      transform: none;
+      box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.06),
+        0 0 0 1px var(--line-divider);
+    }
+
+    :global(.dark) .advertisement-widget:hover {
+      box-shadow:
+        0 2px 12px rgba(0, 0, 0, 0.2),
+        0 0 0 1px oklch(0.75 0.14 var(--hue));
+    }
+  }
+
+  /* 高对比度模式支持 */
+  @media (prefers-contrast: high) {
+    .advertisement-widget {
+      border-width: 2px;
+    }
+
+    .advertisement-widget:hover {
+      border-color: oklch(0.6 0.2 var(--hue));
+    }
+  }
+
+  /* 减少动画模式支持 */
+  @media (prefers-reduced-motion: reduce) {
+    .advertisement-widget,
+    .close-ad-btn,
+    .advertisement-widget img,
+    .advertisement-widget a {
+      transition: none;
+    }
+
+    .advertisement-widget:hover {
+      transform: none;
+    }
+  }
+</style>

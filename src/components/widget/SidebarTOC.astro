@@ -1,0 +1,122 @@
+---
+import type { MarkdownHeading } from "astro";
+import TOCStyles from "@/components/common/styles/TOCStyles.astro";
+import I18nKey from "@/i18n/i18nKey";
+import { i18n } from "@/i18n/translation";
+import WidgetLayout from "./WidgetLayout.astro";
+
+interface Props {
+	headings: MarkdownHeading[];
+	class?: string;
+	style?: string;
+}
+
+const { headings: _headings = [], class: className, style } = Astro.props;
+---
+
+<WidgetLayout 
+  name={i18n(I18nKey.tableOfContents)} 
+  id="sidebar-toc"
+  class={className}
+  style={style}
+>
+  <div class="toc-scroll-container">
+    <div
+      class="toc-content"
+      id="sidebar-toc-content"
+    >
+      <!-- TOC内容将由JavaScript动态生成 -->
+    </div>
+  </div>
+</WidgetLayout>
+
+<TOCStyles />
+
+<style lang="stylus">
+/* SidebarTOC 特定样式 */
+.toc-scroll-container
+	max-height: calc(100vh - 20rem)
+</style>
+
+<script>
+  import { TOCManager } from "@/utils/tocUtils";
+
+  if (typeof window.SidebarTOC === "undefined") {
+    window.SidebarTOC = {
+      manager: null
+    };
+  }
+
+  async function initSidebarTOC() {
+    const tocContent = document.getElementById("sidebar-toc-content");
+    if (!tocContent) return;
+
+    // 检查是否为文章页面
+    const isCurrentlyPostPage = window.location.pathname.includes("/posts/");
+    const sidebarTocWidget = document.getElementById("sidebar-toc");
+    
+    if (!isCurrentlyPostPage) {
+      // 非文章页，隐藏侧边栏目录
+      if (sidebarTocWidget) {
+        sidebarTocWidget.style.display = 'none';
+      }
+      return;
+    } else {
+      // 文章页，显示侧边栏目录
+      if (sidebarTocWidget) {
+        sidebarTocWidget.style.display = '';
+      }
+    }
+
+    try {
+      // 清理旧实例
+      if (window.SidebarTOC.manager) {
+        window.SidebarTOC.manager.cleanup();
+      }
+
+      // 创建新实例
+      window.SidebarTOC.manager = new TOCManager({
+        contentId: "sidebar-toc-content",
+        indicatorId: "sidebar-active-indicator",
+        maxLevel: 3,
+        scrollOffset: 80,
+      });
+
+      // 初始化
+      window.SidebarTOC.manager.init();
+    } catch (error) {
+      console.error("Failed to load TOCManager for SidebarTOC:", error);
+    }
+  }
+
+  // 初始化
+  // 确保 DOM 准备好后再执行
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initSidebarTOC);
+  } else {
+    initSidebarTOC();
+  }
+
+  // 页面切换时重新初始化
+  document.addEventListener("swup:contentReplaced", () => {
+    setTimeout(initSidebarTOC, 100);
+  });
+  
+  // Astro 页面切换事件
+  document.addEventListener("astro:page-load", () => {
+    setTimeout(initSidebarTOC, 100);
+  });
+  
+  // 浏览器导航事件
+  window.addEventListener("popstate", () => {
+    setTimeout(initSidebarTOC, 200);
+  });
+  
+  // 监听 hashchange（但排除 TOC 内部导航）
+  window.addEventListener("hashchange", () => {
+    if (!window.tocInternalNavigation) {
+      setTimeout(initSidebarTOC, 100);
+    }
+    window.tocInternalNavigation = false;
+  });
+</script>

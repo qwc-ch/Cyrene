@@ -1,0 +1,66 @@
+---
+interface Props {
+	config: {
+		src: {
+			desktop?: string;
+			mobile?: string;
+		};
+		position?: string;
+		zIndex?: number;
+		opacity?: number;
+		blur?: number;
+	};
+	className?: string;
+}
+
+const { config, className } = Astro.props;
+
+// 获取图片源
+const desktopSrc = config.src.desktop || config.src.mobile || "";
+const mobileSrc = config.src.mobile || config.src.desktop || "";
+
+// 如果没有任何图片源，不渲染
+if (!desktopSrc && !mobileSrc) {
+	return null;
+}
+
+// 样式相关
+const position = config.position || "center";
+const zIndex = config.zIndex || -1;
+const opacity = config.opacity || 0.8;
+const blur = config.blur || 0;
+---
+
+<div 
+	class:list={[
+		"fixed inset-0 w-full h-full overflow-hidden pointer-events-none",
+		className
+	].filter(Boolean)}
+	style={`z-index: ${zIndex}; opacity: ${opacity};`}
+	data-overlay-wallpaper
+>
+	<!-- 桌面端壁纸 -->
+	{desktopSrc && (
+		<div class="hidden lg:block w-full h-full relative">
+			<img
+				src={desktopSrc}
+				alt="Desktop wallpaper"
+				class="absolute inset-0 w-full h-full object-cover"
+				style={`object-position: ${position};${blur > 0 ? ` filter: blur(${blur}px);` : ''}`}
+			/>
+		</div>
+	)}
+
+	<!-- 移动端壁纸 -->
+	{mobileSrc && (
+		<div class="block lg:hidden w-full h-full relative">
+			<img
+				src={mobileSrc}
+				alt="Mobile wallpaper"
+				class="absolute inset-0 w-full h-full object-cover"
+				style={`object-position: ${position};${blur > 0 ? ` filter: blur(${blur}px);` : ''}`}
+			/>
+		</div>
+	)}
+</div>
+

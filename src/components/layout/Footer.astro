@@ -1,0 +1,69 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import { footerConfig, profileConfig } from "@/config";
+import { url } from "@/utils/url-utils";
+
+const currentYear = new Date().getFullYear();
+
+// 读取FooterConfig.html文件内容
+let customFooterHtml = "";
+if (footerConfig.enable) {
+	try {
+		const footerConfigPath = path.join(
+			process.cwd(),
+			"src",
+			"config",
+			"FooterConfig.html",
+		);
+		customFooterHtml = fs.readFileSync(footerConfigPath, "utf-8");
+		// 移除HTML注释
+		customFooterHtml = customFooterHtml.replace(/<!--[\s\S]*?-->/g, "").trim();
+	} catch (error) {
+		console.warn("FooterConfig.html文件读取失败:", error.message);
+	}
+}
+---
+
+<!--<div class="border-t border-[var(&#45;&#45;primary)] mx-16 border-dashed py-8 max-w-[var(&#45;&#45;page-width)] flex flex-col items-center justify-center px-6">-->
+<div
+  class="transition border-t border-black/10 dark:border-white/15 my-10 border-dashed mx-32"
+>
+</div>
+<!--<div class="transition bg-[oklch(92%_0.01_var(&#45;&#45;hue))] dark:bg-black rounded-2xl py-8 mt-4 mb-8 flex flex-col items-center justify-center px-6">-->
+<div
+  class="transition border-dashed border-[oklch(85%_0.01_var(--hue))] dark:border-white/15 rounded-2xl mb-12 flex flex-col items-center justify-center px-6"
+>
+  <div class="transition text-50 text-sm text-center">
+    {customFooterHtml && <div class="mb-2" set:html={customFooterHtml} />}
+    &copy; <span id="copyright-year">{currentYear}</span>
+    {profileConfig.name}. All Rights Reserved. /
+    <a
+      class="transition link text-[var(--primary)] font-medium"
+      href={url("rss/")}
+      onclick={`event.preventDefault(); window.location.href = '${url("rss/")}'`}
+      >RSS</a
+    > /
+    <a
+      class="transition link text-[var(--primary)] font-medium"
+      target="_blank"
+      href={url("sitemap-index.xml")}>Sitemap</a
+    ><br />
+    Powered by
+    <a
+      class="transition link text-[var(--primary)] font-medium"
+      target="_blank"
+      href="https://astro.build">Astro</a
+    > &
+    <a
+      class="transition link text-[var(--primary)] font-medium"
+      target="_blank"
+      href="https://github.com/qwc-ch/Cyene">Cyene</a
+    ><br />
+    <!-- 
+      注意：请勿随意修改或删除 "Powered by Astro & Cyene" 部分，这是对开源项目的尊重和支持。
+      如果您需要在底部增加内容，请在src/config/footerConfig.ts中修改enable属性为true，然后编辑src/config/FooterConfig.html文件。
+      您可以随意在src/config/FooterConfig.html中随意添加自定义内容，不需要修改Footer.astro文件。
+    -->
+  </div>
+</div>

@@ -1,0 +1,211 @@
+---
+// Fancybox 管理器组件
+---
+
+<script>
+import { Fancybox } from "@fancyapps/ui";
+import "@fancyapps/ui/dist/fancybox/fancybox.css";
+
+function initFancybox() {
+  // 销毁现有的 Fancybox 实例（如果存在）
+  Fancybox.close();
+  
+  // 为相册图片添加 Fancybox 支持
+  (Fancybox.bind as any)(".custom-md img, #post-cover img, .moment-images img", {
+    groupAll: true,
+    Thumbs: {
+      autoStart: true,
+      showOnStart: "yes",
+    },
+    // 添加自定义按钮
+    Toolbar: {
+      display: {
+        left: ["infobar"],
+        middle: [
+          "zoomIn",
+          "zoomOut",
+          "toggle1to1",
+          "rotateCCW",
+          "rotateCW",
+          "flipX",
+          "flipY",
+        ],
+        right: ["slideshow", "thumbs", "close"],
+      },
+    },
+    // 动画效果
+    animated: true,
+    // 是否支持拖拽
+    dragToClose: true,
+    // 是否支持键盘导航
+    keyboard: {
+      Escape: "close",
+      Delete: "close",
+      Backspace: "close",
+      PageUp: "next",
+      PageDown: "prev",
+      ArrowUp: "next",
+      ArrowDown: "prev",
+      ArrowRight: "next",
+      ArrowLeft: "prev",
+    },
+    // 自适应图片大小
+    fitToView: true,
+    // 图片预加载
+    preload: 3,
+    // 循环浏览
+    infinite: true,
+    // 智能图片适配
+    Panzoom: {
+      maxScale: 3,
+      minScale: 1,
+    },
+    // 幻灯片设置
+    Carousel: {
+      transition: "slide",
+      preload: 2,
+    },
+    // 禁用标题显示
+    caption: false
+  });
+  
+  // 为相册中的链接添加 Fancybox 支持
+  (Fancybox.bind as any)(".moment-images a[data-fancybox]", {
+    Thumbs: {
+      autoStart: true,
+      showOnStart: "yes",
+    },
+    // 工具栏配置
+    Toolbar: {
+      display: {
+        left: ["infobar"],
+        middle: [
+          "zoomIn",
+          "zoomOut",
+          "toggle1to1",
+          "rotateCCW",
+          "rotateCW",
+          "flipX",
+          "flipY",
+        ],
+        right: ["slideshow", "thumbs", "close"],
+      },
+    },
+    // 动画效果
+    animated: true,
+    // 是否支持拖拽
+    dragToClose: true,
+    // 是否支持键盘导航
+    keyboard: {
+      Escape: "close",
+      Delete: "close",
+      Backspace: "close",
+      PageUp: "next",
+      PageDown: "prev",
+      ArrowUp: "next",
+      ArrowDown: "prev",
+      ArrowRight: "next",
+      ArrowLeft: "prev",
+    },
+    // 自适应图片大小
+    fitToView: true,
+    // 图片预加载
+    preload: 3,
+    // 循环浏览
+    infinite: true,
+    // 智能图片适配
+    Panzoom: {
+      maxScale: 3,
+      minScale: 1,
+    },
+    // 自定义源获取
+    source: (el: any) => {
+      return el.getAttribute("data-src") || el.getAttribute("href");
+    },
+    // 禁用标题显示
+    caption: false
+  });
+  
+  // 为单独的 fancybox 图片添加支持
+  (Fancybox.bind as any)("[data-fancybox]:not(.moment-images a)", {
+    // 自定义选项
+    Thumbs: {
+      autoStart: true,
+      showOnStart: "yes",
+    },
+    // 工具栏配置
+    Toolbar: {
+      display: {
+        left: ["infobar"],
+        middle: [
+          "zoomIn",
+          "zoomOut",
+          "toggle1to1",
+          "rotateCCW",
+          "rotateCW",
+          "flipX",
+          "flipY",
+        ],
+        right: ["slideshow", "thumbs", "close"],
+      },
+    },
+    // 动画效果
+    animated: true,
+    // 是否支持拖拽
+    dragToClose: true,
+    // 是否支持键盘导航
+    keyboard: {
+      Escape: "close",
+      Delete: "close",
+      Backspace: "close",
+      PageUp: "next",
+      PageDown: "prev",
+      ArrowUp: "next",
+      ArrowDown: "prev",
+      ArrowRight: "next",
+      ArrowLeft: "prev",
+    },
+    // 自适应图片大小
+    fitToView: true,
+    // 图片预加载
+    preload: 3,
+    // 循环浏览
+    infinite: true,
+    // 智能图片适配
+    Panzoom: {
+      maxScale: 3,
+      minScale: 1,
+    },
+    // 禁用标题显示
+    caption: false
+  });
+}
+
+const setup = () => {
+  // 初始化 Fancybox
+  initFancybox();
+  
+  // 在页面视图更改时重新初始化
+  if (window.swup) {
+    window.swup.hooks.on("page:view", () => {
+      // 等待 DOM 更新后初始化
+      setTimeout(() => {
+        initFancybox();
+      }, 100);
+    });
+  }
+}
+
+if (window.swup) {
+  setup()
+} else {
+  document.addEventListener("swup:enable", setup)
+  
+  // 如果 swup 尚未初始化，则直接初始化
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initFancybox);
+  } else {
+    initFancybox();
+  }
+}
+</script>

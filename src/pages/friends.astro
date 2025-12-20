@@ -1,0 +1,132 @@
+---
+import { getEntry, render } from "astro:content";
+import Comment from "@components/comment/index.astro";
+import Markdown from "@components/misc/Markdown.astro";
+import Icon from "@/components/misc/Icon.astro";
+import { getEnabledFriends } from "@/config";
+import I18nKey from "@/i18n/i18nKey";
+import { i18n } from "@/i18n/translation";
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
+
+const friendsPost = await getEntry("spec", "friends");
+
+if (!friendsPost) {
+	throw new Error("friends page content not found");
+}
+
+const { Content } = await render(friendsPost);
+
+// 使用配置文件中的友链数据，按权重排序
+const items = getEnabledFriends();
+
+// 页面标题和描述
+const title = i18n(I18nKey.friends);
+const description = i18n(I18nKey.friendsDescription);
+---
+
+<MainGridLayout title={title} description={description}>
+  <div
+    class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32"
+  >
+    <div class="card-base z-10 px-9 py-6 relative w-full">
+      <!-- 页面标题和描述 -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="h-8 w-8 rounded-lg bg-[var(--primary)] flex items-center justify-center text-white dark:text-black/70">
+            <Icon icon="material-symbols:group" class="text-[1.5rem]"></Icon>
+          </div>
+          <h1 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+            {title}
+          </h1>
+        </div>
+        {description && (
+          <p class="text-base text-neutral-600 dark:text-neutral-400 leading-relaxed mb-4">
+            {description}
+          </p>
+        )}
+      </div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8 my-4">
+        {
+          items.map((item) => (
+            <div class="flex flex-nowrap items-stretch h-24 sm:h-28 gap-3 sm:gap-4 rounded-[var(--radius-large)]">
+              <div class="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 rounded-lg overflow-hidden bg-zinc-200 dark:bg-zinc-900">
+                <img
+                  src={item.imgurl}
+                  alt="站点头像"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="grow w-full flex flex-col justify-between min-w-0">
+                <div class="min-w-0 flex-1">
+                  <a
+                    href={item.siteurl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="font-bold transition text-base sm:text-lg text-neutral-900 dark:text-neutral-100 mb-1 hover:text-[var(--primary)] block truncate"
+                  >
+                    {item.title}
+                  </a>
+                  <div class="text-50 text-xs sm:text-sm font-medium line-clamp-2 leading-relaxed">
+                    {item.desc}
+                  </div>
+                </div>
+                <div
+                  class:list={[
+                    "items-center flex-shrink-0 mt-1 sm:mt-2",
+                    { flex: true, "hidden md:flex": false },
+                  ]}
+                >
+                  <div class="flex flex-row items-center gap-1 overflow-hidden">
+                    {item.tags &&
+                      item.tags.length > 0 &&
+                      item.tags.map((tag) => (
+                        <span class="btn-regular h-5 sm:h-6 text-xs px-1.5 sm:px-2 rounded-md whitespace-nowrap flex-shrink-0">
+                          {tag}
+                        </span>
+                      ))}
+                    {!(item.tags && item.tags.length > 0) && (
+                      <div class="transition text-50 text-xs sm:text-sm font-medium">
+                        {i18n(I18nKey.noTags)}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <a
+                href={item.siteurl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex btn-regular w-[3.25rem] rounded-lg bg-[var(--enter-btn-bg)] hover:bg-[var(--enter-btn-bg-hover)] active:bg-[var(--enter-btn-bg-active)] active:scale-95 flex-shrink-0"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  aria-hidden="true"
+                  role="img"
+                  class="transition text-[var(--primary)] text-2xl sm:text-4xl mx-auto iconify iconify--material-symbols"
+                  width="1em"
+                  height="1em"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"
+                  />
+                </svg>
+              </a>
+            </div>
+          ))
+        }
+      </div>
+      <Markdown class="mt-2">
+        <Content />
+      </Markdown>
+    </div>
+  </div>
+
+  <!-- 评论区 -->
+  <div class="mt-4">
+    <Comment post={friendsPost} customPath="/friends/" />
+  </div>
+</MainGridLayout>
