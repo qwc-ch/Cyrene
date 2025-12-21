@@ -5,10 +5,14 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 	// 基础功能开关
 	enable: true, // 启用音乐播放器功能
 
+	// 新增：播放器类型选择（在这里修改！）
+	// 设置 'svelte' 使用Svelte播放器，设置 'aplayer' 使用APlayer
+	playerType: "svelte",
+
 	// 使用方式：'meting' 或 'local'
 	mode: "meting", // "meting" 使用 Meting API，"local" 使用本地音乐列表
 
-	// Meting API 配置
+	// Meting API 配置（APlayer使用）
 	meting: {
 		// Meting API 地址
 		// 默认使用官方 API，也可以使用自定义 API
@@ -102,5 +106,29 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 			// 移动端断点（小于此宽度时应用移动端配置）
 			breakpoint: 768,
 		},
+	},
+
+	// 新增：Svelte播放器配置
+	svelte: {
+		// Meting API 配置（用于Svelte播放器）
+		meting_api: "https://www.bilibili.uno/api?server=:server&type=:type&id=:id&auth=:auth&r=:r",
+		id: "17572243226", // 可以设置不同的歌单
+		server: "netease",
+		type: "playlist",
+		
+		// 本地播放列表（用于Svelte播放器）
+		local_playlist: [
+			{
+				title: "使一颗心免于哀伤",
+				artist: "知更鸟 / HOYO-MiX / Chevy",
+				url: "/assets/music/使一颗心免于哀伤-哼唱.wav",
+				cover: "/assets/music/cover/109951169585655912.jpg",
+			},
+		],
+		
+		// 播放器行为
+		autoplay: false,
+		volume: 0.7,
+		loop: "all",
 	},
 };

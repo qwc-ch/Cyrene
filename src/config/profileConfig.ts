@@ -28,10 +28,10 @@ export const profileConfig: ProfileConfig = {
 			showName: false,
 		},
 		{
-			name: "Email",
-			icon: "fa6-solid:envelope",
-			url: "zzzzzzxx2022@163.com",
-			showName: false,
-		},
+	        name: "Email",
+	        icon: "fa6-solid:envelope",
+	        url: "mailto:zzzzzzxx2022@163.com",
+	        showName: false,
+        }
 	],
 };

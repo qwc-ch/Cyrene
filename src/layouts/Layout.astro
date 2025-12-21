@@ -160,7 +160,25 @@ const bannerOffset = `${BANNER_HEIGHT_EXTEND / 2}vh`;
     />
 
     <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
+<meta name="generator" content={Astro.generator} />
+
+<!-- 添加ICO文件链接 - 放在最前面 -->
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+<!-- 添加明确的favicon链接 -->
+<link rel="icon" type="image/png" href="/favicon/favicon-light-32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon/favicon-light-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="/favicon/favicon-light-180.png" sizes="180x180">
+
+<!-- 深色主题的favicon -->
+<link rel="icon" media="(prefers-color-scheme: dark)" type="image/png" href="/favicon/favicon-dark-32.png" sizes="32x32">
+<link rel="icon" media="(prefers-color-scheme: dark)" type="image/png" href="/favicon/favicon-dark-192.png" sizes="192x192">
+<link rel="apple-touch-icon" media="(prefers-color-scheme: dark)" href="/favicon/favicon-dark-180.png" sizes="180x180">
+
+<!-- 暂时注释掉原有的favicons.map代码 -->
+<!-- 
+
+-->
     {
       favicons.map((favicon) => (
         <link

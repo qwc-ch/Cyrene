@@ -32,7 +32,7 @@ import rehypeFigure from "./src/plugins/rehype-figure.mjs";
 
 // https://astro.build/config
 export default defineConfig({
-	site: "site_url",
+	site: siteConfig.siteURL,
 
 	base: "/",
 	trailingSlash: "always",
