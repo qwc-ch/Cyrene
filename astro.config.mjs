@@ -32,7 +32,7 @@ import rehypeFigure from "./src/plugins/rehype-figure.mjs";
 
 // https://astro.build/config
 export default defineConfig({
-	site: "https://qwc-ch.github.io",
+	site: "site_url",
 
 	base: "/",
 	trailingSlash: "always",
