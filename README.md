@@ -30,9 +30,9 @@
 
 ## ✨ 核心功能
 
-Cyene 由 **Firefly** 开发而来，在核心功能层面，两者保持高度一致，确保您能获得同样成熟、完善的博客体验，故不在此重复列举。
+Cyene 由 **Firefly** 开发而来，在核心功能层面，两者保持高度一致，确保您能获得同样成熟、完善的博客体验，故不在此重复列举。（对比Firefly更改看板娘模型和新增一个音乐播放器现为双音乐播放器）
 
-您可查阅 [Firefly 仓库](https://github.com/CuteLeaf/Firefly) 了解所有详细特性。
+您可查阅 [Firefly 仓库](https://github.com/CuteLeaf/Firefly) 了解详细特性（仅为参考）。
 
 ## 📝 计划中...
 
@@ -84,7 +84,7 @@ pnpm dev
    安装命令： `pnpm install`
    
 ## 📖 配置说明
-> 📚 **详细配置文档**: 请查看 [Firefly使用文档](https://docs-firefly.cuteleaf.cn/)
+> 📚 **详细配置文档**: 请查看（仅为参考） [Firefly使用文档](https://docs-firefly.cuteleaf.cn/)
 
 
  ### 设置网站语言
@@ -151,7 +151,8 @@ lang: zh-CN # 仅当文章语言与 `siteConfig.ts` 中的网站语言不同时�
 | `pnpm astro --help` | 显示 Astro CLI 帮助信息 |
 ## 🙏 致谢
 - 非常感谢 [CuteLeaf](https://github.com/CuteLeaf) 开发的 [Firefly](https://github.com/CuteLeaf/Firefly) 模板，Cyene 就是基于这个模板二次开发
-- 同时也感谢 [saicaca](https://github.com/saicaca) 开发了 [Fuwari](https://github.com/saicaca/fuwari) 模板，为后续许多优秀项目奠定了坚实基础”。。
+- 同时也感谢 [saicaca](https://github.com/saicaca) 开发了 [Fuwari](https://github.com/saicaca/fuwari) 模板，为后续许多优秀项目奠定了坚实基础。
+- 感谢 [matsuzaka-yuki](matsuzaka-yuki) 模板,Cyene 用了此项目的音乐播放器
 - 图标来自 [Iconify](https://iconify.design/)
 - 昔涟部分相关图片素材版权归游戏 [《崩坏：星穹铁道》](https://sr.mihoyo.com/) 开发商 [米哈游](https://www.mihoyo.com/) 所有
 ## 📝 许可协议
