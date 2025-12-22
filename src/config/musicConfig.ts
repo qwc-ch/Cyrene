@@ -108,7 +108,7 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 		},
 	},
 
-	// 新增：Svelte播放器配置
+	// Svelte播放器配置
 	svelte: {
 		// Meting API 配置（用于Svelte播放器）
 		meting_api: "https://www.bilibili.uno/api?server=:server&type=:type&id=:id&auth=:auth&r=:r",
