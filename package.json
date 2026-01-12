@@ -48,7 +48,7 @@
     "markdown-it": "^14.1.0",
     "marked": "^16.4.2",
     "mdast-util-to-string": "^4.0.0",
-    "meilisearch": "^0.54.0",
+    "meilisearch": "^0.55.0",
     "node-html-parser": "^7.0.1",
     "overlayscrollbars": "^2.13.0",
     "pagefind": "^1.4.0",
