@@ -1,7 +1,7 @@
 很久没有更新了，用AI合并了下firefly，基本上是只保留了一些美术资源，我推荐大家去用[firefly](https://github.com/CuteLeaf/Firefly)
 
 
-<img src="./docs/images/1131.png" width="350" height="500" alt="Cyrene" align=right />
+<img src="./docs/images/cyrene.png" width="350" height="350" alt="Cyrene" align=right />
 
 <div align="center">
 
