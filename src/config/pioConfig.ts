@@ -3,14 +3,14 @@ import type { Live2DWidgetConfig, SpineModelConfig } from "../types/pioConfig";
 // Spine 看板娘配置
 export const spineModelConfig: SpineModelConfig = {
 	// Spine 看板娘开关
-	enable: false,
+	enable: true,
 
 	// Spine模型配置
 	model: {
 		// Spine模型文件路径
-		path: "/pio/models/spine/firefly/1310.json",
-		// 模型缩放比例
-		scale: 1.0,
+		path: "/pio/models/spine/Cyrene/xilian.json",
+		// 模型缩放比例 - 根据8289×6919的大尺寸调整
+		scale: 0.05,
 		// X轴偏移
 		x: 0,
 		// Y轴偏移
@@ -21,50 +21,46 @@ export const spineModelConfig: SpineModelConfig = {
 	position: {
 		// 显示位置 bottom-left，bottom-right，top-left，top-right，注意：在右下角可能会挡住返回顶部按钮
 		corner: "bottom-left",
-		// 距离边缘0px
-		offsetX: 0,
-		// 距离下边缘0px
-		offsetY: 0,
+		// 距离边缘35px
+		offsetX: 35,
+		// 距离下边缘35px
+		offsetY: 35,
 	},
 
 	// 尺寸配置
 	size: {
 		// 容器宽度
-		width: 135,
+		width: 300,
 		// 容器高度
-		height: 165,
+		height: 400,
 	},
 
 	// 交互配置
 	interactive: {
 		// 交互功能开关
 		enabled: true,
-		// 点击时随机播放的动画列表
-		clickAnimations: [
-			"emoji_0",
-			"emoji_1",
-			"emoji_2",
-			"emoji_3",
-			"emoji_4",
-			"emoji_5",
-		],
+		// 点击时随机播放的动画列表 - 只有idle动画可用
+		clickAnimations: ["idle"],
 		// 点击时随机显示的文字消息
 		clickMessages: [
-			"你好呀！我是流萤~",
+			"你好呀！我是昔涟~",
 			"今天也要加油哦！✨",
-			"想要一起去看星空吗？🌟",
+			"想要一起去探索世界吗？🌟",
 			"记得要好好休息呢~",
 			"有什么想对我说的吗？💫",
-			"让我们一起探索未知的世界吧！🚀",
-			"每一颗星星都有自己的故事~⭐",
+			"让我们一起创造美好回忆吧！🚀",
+			"每一个瞬间都值得珍惜~⭐",
 			"希望能带给你温暖和快乐！💖",
+			"点击我可以看到我的动作哦！",
+			"喜欢这个造型吗？😊",
+			"感谢你的陪伴和点击！💕",
 		],
 		// 文字显示时间（毫秒）
 		messageDisplayTime: 3000,
-		// 待机动画列表
-		idleAnimations: ["idle", "emoji_0", "emoji_1", "emoji_3", "emoji_4"],
-		// 待机动画切换间隔（毫秒）
-		idleInterval: 8000,
+		// 待机动画列表 - 只有idle
+		idleAnimations: ["idle"],
+		// 设置为动画时长（11秒），避免重复播放
+		idleInterval: 11000,
 	},
 
 	// 响应式配置
